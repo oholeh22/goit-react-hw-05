@@ -1,0 +1,9 @@
+.movie-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.movie-card {
+  width: 200px;
+  text-align: center;
+}

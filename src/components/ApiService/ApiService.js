@@ -1,83 +1,133 @@
-import axios from 'axios';
+import axios from "axios";
 
-const BASE_URL = 'https://api.themoviedb.org/3';
-const API_TOKEN = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NjU5YzVkMTViNDQxNThhMjJmY2ViMjRhNzdlMDIzYiIsIm5iZiI6MTczMjExMDU1Ni43NjQyODE3LCJzdWIiOiI2NzNkYTE1MzI0NzkxN2U5NWIyYWZiNTEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.f-Inh6FqkT4cE5uReenStVvMwywiqOYDPx-eI8cx4W4';
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/';
-const IMAGE_SIZE = 'w500';  
+// Ваш ключ API
+const API_KEY = '9659c5d15b44158a22fceb24a77e023b';
+const BASE_URL = "https://api.themoviedb.org/3";
 
-export const getFullImageUrl = (imagePath) => {
-  if (imagePath) {
-    return `${IMAGE_BASE_URL}${IMAGE_SIZE}${imagePath}`;
-  }
-  return '';
+export const getFullImageUrl = (path) => {
+  return `https://image.tmdb.org/t/p/w500${path}`;
 };
 
+// Функция для поиска трендовых фильмов
+export const fetchTrendingMovies = async () => {
+  try {
+    const { data } = await axios.get(`${BASE_URL}/trending/movie/day`, {
+      params: { api_key: API_KEY },
+    });
 
+    return data.results; // Возвращаем список трендовых фильмов
+  } catch (error) {
+    console.error("Error fetching trending movies:", error);
+    throw error;
+  }
+};
+
+// Функция для получения популярных фильмов
 export const fetchPopularMovies = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}/movie/popular`, {
-      headers: {
-        Authorization: API_TOKEN,
-      },
+    const { data } = await axios.get(`${BASE_URL}/movie/popular`, {
+      params: { api_key: API_KEY }, // Исправленный синтаксис
     });
-    return response.data.results; 
+
+    return data.results; // Возвращаем список популярных фильмов
   } catch (error) {
     console.error("Error fetching popular movies:", error);
     throw error;
   }
 };
 
+// Функция для поиска фильмов по названию
 export const searchMovies = async (query) => {
+  console.log('Searching for:', query); // Логируем запрос
   try {
-    const response = await axios.get(`${BASE_URL}/search/movie`, {
+    // Проверим, что query не пустой
+    if (!query) {
+      console.log('Query is empty');
+      return [];
+    }
+
+    const { data } = await axios.get(`${BASE_URL}/search/movie`, {
       params: {
+        api_key: API_KEY,
         query: query,
-        include_adult: false,
-      },
-      headers: {
-        Authorization: API_TOKEN,
+        language: 'en-US',
+        page: 1,
+        include_adult: false, // Не включаем фильмы для взрослых
       },
     });
-    return response.data.results;
+
+    console.log('Found movies:', data.results);
+    return data.results; // Возвращаем найденные фильмы
   } catch (error) {
-    console.error("Error searching movies:", error);
+    console.error("Error fetching movies:", error);
+    return []; // Возвращаем пустой массив в случае ошибки
+  }
+};
+
+// Функция для получения деталей фильма по его ID
+export const fetchMovieDetails = async (movieId) => {
+  try {
+    const { data } = await axios.get(`${BASE_URL}/movie/${movieId}`, {
+      params: { api_key: API_KEY, language: "en-US" },
+    });
+
+    return data; // Возвращаем детали фильма
+  } catch (error) {
+    console.error("Error fetching movie details:", error);
     throw error;
   }
 };
 
-export async function fetchMovieDetails(movieId) {
-  const response = await axios.get(`${BASE_URL}/movie/${movieId}`, {
-    headers: { Authorization: API_TOKEN },
-  });
-  return response.data;
-}
+// Функция для получения актеров фильма по его ID
+export const fetchMovieCast = async (movieId) => {
+  try {
+    const { data } = await axios.get(`${BASE_URL}/movie/${movieId}/credits`, {
+      params: { api_key: API_KEY, language: "en-US" },
+    });
 
-export async function fetchMovieCast(movieId) {
-  const response = await axios.get(`${BASE_URL}/movie/${movieId}/credits`, {
-    headers: { Authorization: API_TOKEN },
-  });
-  return response.data.cast; 
-}
+    return data.cast; // Возвращаем список актеров
+  } catch (error) {
+    console.error("Error fetching movie cast:", error);
+    throw error;
+  }
+};
 
-export async function fetchMovieReviews(movieId) {
-  const response = await axios.get(`${BASE_URL}/movie/${movieId}/reviews`, {
-    headers: { Authorization: API_TOKEN },
-  });
-  return response.data.results; 
-}
+// Функция для получения отзывов о фильме по его ID
+export const fetchMovieReviews = async (movieId) => {
+  try {
+    const { data } = await axios.get(`${BASE_URL}/movie/${movieId}/reviews`, {
+      params: { api_key: API_KEY, language: "en-US", page: 1 },
+    });
 
-export const fetchMoviesByQuery = async (query) => {
-  const response = await axios.get(`${BASE_URL}/search/movie`, {
-    params: {
-      query,
-      language: 'en-US',
-      include_adult: false,
-    },
-    headers: {
-      Authorization: API_TOKEN,
-    },
-  });
+    return data.results; // Возвращаем список отзывов
+  } catch (error) {
+    console.error("Error fetching movie reviews:", error);
+    throw error;
+  }
+};
 
-  return response.data.results;
+// Функция для поиска фильмов (с axios)
+export const fetchMovies = async (query) => {
+  try {
+    if (!query) {
+      console.log('Query is empty');
+      return [];
+    }
+
+    const { data } = await axios.get(`${BASE_URL}/search/movie`, {
+      params: {
+        api_key: API_KEY,
+        query: query,
+        language: 'en-US',
+        page: 1,
+        include_adult: false,
+      },
+    });
+
+    return data.results; // Возвращаем результаты поиска
+  } catch (error) {
+    console.error("Error fetching movies:", error);
+    return []; // Возвращаем пустой массив при ошибке
+  }
 };
 

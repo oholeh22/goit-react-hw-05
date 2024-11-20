@@ -1,0 +1,37 @@
+.movie-list {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(200px, 1fr)
+  ); /* Сетка для адаптивного расположения карточек */
+  gap: 20px; /* Расстояние между карточками */
+  padding: 20px; /* Внутренние отступы */
+}
+
+.movie-card {
+  background-color: #ffffff; /* Белый фон карточки */
+  border-radius: 10px; /* Закругленные углы */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для объема */
+  overflow: hidden; /* Обрезаем содержимое за границами */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Анимация при наведении */
+}
+
+.movie-card:hover {
+  transform: scale(1.05); /* Увеличиваем карточку */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* Усиливаем тень */
+}
+
+.movie-card img {
+  width: 100%; /* Изображение занимает всю ширину карточки */
+  height: auto; /* Автоматическая высота для сохранения пропорций */
+  display: block; /* Убираем лишние отступы */
+  cursor: pointer; /* Указатель при наведении */
+}
+
+.movie-card h2 {
+  font-size: 16px; /* Размер текста заголовка */
+  margin: 10px; /* Отступы вокруг текста */
+  text-align: center; /* Центрируем текст */
+  color: #333; /* Цвет текста */
+  font-weight: 500; /* Средний вес шрифта */
+}
