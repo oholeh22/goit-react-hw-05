@@ -1,10 +1,6 @@
 {
-    "redirects": [
-      {
-        "source": "/old-url",
-        "destination": "/new-url",
-        "permanent": true
-      }
-    ]
-  }
-  
+      "rewrites":  [
+        {"source": "/(.*)", "destination": "/"}
+      ]
+    }
+    
