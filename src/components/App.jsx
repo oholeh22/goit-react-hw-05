@@ -1,5 +1,5 @@
 import { Suspense, lazy, useState, useEffect } from 'react';
-import { Routes, Route, Link, useNavigate, useLocation, NavLink } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, NavLink } from 'react-router-dom';
 import { fetchPopularMovies, searchMovies } from './ApiService/ApiService';
 import './App.css';
 import MovieSearch from './MovieSearch/MovieSearch';
@@ -25,24 +25,23 @@ const MovieReviews = lazy(() => import('../pages/MovieReviews/MovieReviews'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage/NotFoundPage'));
 
 function App() {
-  const [popularMovies, setPopularMovies] = useState([]); // Для хранения популярных фильмов
-  const [movies, setMovies] = useState([]); // Для фильмов по поисковому запросу
-  const [searchQuery, setSearchQuery] = useState(''); // Для отслеживания поискового запроса
+  const [popularMovies, setPopularMovies] = useState([]); 
+  const [movies, setMovies] = useState([]); 
+  const [searchQuery, setSearchQuery] = useState(''); 
   const [loading, setLoading] = useState(false);
-  const [isSearchPerformed, setIsSearchPerformed] = useState(false); // Флаг, чтобы показать фильмы только после поиска
-  const [error, setError] = useState(''); // Для отслеживания ошибок
+  const [isSearchPerformed, setIsSearchPerformed] = useState(false); 
+  const [error, setError] = useState(''); 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Получаем популярные фильмы при монтировании компонента
   useEffect(() => {
     const getMovies = async () => {
       setLoading(true);
       try {
         const popularMovies = await fetchPopularMovies();
-        setPopularMovies(popularMovies); // Загружаем популярные фильмы только один раз
+        setPopularMovies(popularMovies);
         if (!isSearchPerformed) {
-          setMovies([]); // Если поиск еще не выполнен, список фильмов пуст
+          setMovies([]); 
         }
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -50,34 +49,31 @@ function App() {
       setLoading(false);
     };
 
-    getMovies(); // Загружаем фильмы только один раз при монтировании компонента
-  }, [isSearchPerformed]); // Перезагружаем только если поиск выполнен
+    getMovies(); 
+  }, [isSearchPerformed]); 
 
-  // Получаем query-параметр из URL
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('query') || '';
     setSearchQuery(query);
     if (query) {
-      handleSearch(query); // Если в URL есть запрос, сразу выполняем поиск
+      handleSearch(query); 
     }
   }, [location.search]);
 
-  // Обработчик поиска
   const handleSearch = async (query) => {
-    if (query.trim() === '') { // Если поле пустое
+    if (query.trim() === '') { 
       setError('Please enter a movie name.');
-      return; // Останавливаем выполнение поиска
+      return; 
     }
 
-    setError(''); // Сбрасываем ошибку, если запрос не пустой
+    setError(''); 
     setSearchQuery(query);
     setLoading(true);
     try {
       const searchResults = await searchMovies(query);
       setMovies(searchResults);
-      setIsSearchPerformed(true); // Флаг поиска
-      // Обновляем URL с параметром запроса
+      setIsSearchPerformed(true); 
       navigate(`/movies?query=${query}`, { replace: true });
     } catch (error) {
       console.error("Error searching movies:", error);
@@ -85,7 +81,6 @@ function App() {
     setLoading(false);
   };
 
-  // Обработчик клика по фильму
   const handleMovieClick = (movieId) => {
     navigate(`/movies/${movieId}`);
   };
@@ -100,13 +95,13 @@ function App() {
             path="/movies"
             element={
               <MovieSearch 
-                onSearch={handleSearch}  // Используем handleSearch прямо
-                setSearchQuery={setSearchQuery} // Передаем setSearchQuery в MoviesPage
+                onSearch={handleSearch} 
+                setSearchQuery={setSearchQuery} 
                 searchQuery={searchQuery} 
                 movies={movies} 
                 loading={loading} 
                 onMovieClick={handleMovieClick} 
-                error={error} // Передаем ошибку в MoviesPage
+                error={error}
               />
             } 
           />

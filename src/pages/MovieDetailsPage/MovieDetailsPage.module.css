@@ -8,7 +8,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Заголовок фильма */
 .movieDetailsContainer h2 {
   font-size: 2rem;
   margin-bottom: 15px;
@@ -16,7 +15,6 @@
   text-align: center;
 }
 
-/* Карточка фильма с изображением и описанием */
 .movieHeader {
   display: flex;
   gap: 20px;
@@ -36,7 +34,6 @@
   text-align: justify;
 }
 
-/* Кнопка "Go Back" */
 .goBackButton {
   background-color: #007bff;
   color: white;
@@ -53,7 +50,6 @@
   background-color: #0056b3;
 }
 
-/* Стили для навигации по Cast и Reviews */
 .navigationLinks {
   display: flex;
   gap: 20px;
@@ -72,7 +68,6 @@
   color: #0056b3;
 }
 
-/* Общие стили для разделов Cast и Reviews */
 .sectionTitle {
   font-size: 1.5rem;
   margin-bottom: 10px;
@@ -87,7 +82,6 @@
   margin-bottom: 20px;
 }
 
-/* Стили для списка актеров и отзывов */
 .castList,
 .reviewsList {
   list-style: none;

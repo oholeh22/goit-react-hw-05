@@ -1,31 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import MovieCard from '../../components/MovieCard/MovieCard';  
 
-const MoviesPage = ({ onSearch, setSearchQuery, searchQuery, movies, loading, onMovieClick, error }) => {
-  const location = useLocation(); // Получаем текущий маршрут
+const MoviesPage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const location = useLocation();
   const navigate = useNavigate();
 
-  // Функция для загрузки фильмов
+  useEffect(() => {
+    const query = new URLSearchParams(location.search).get('query') || '';
+    setSearchQuery(query);
+  }, [location.search]);
+
   useEffect(() => {
     const fetchMovies = async () => {
+      if (!searchQuery.trim()) return;
+
       try {
+        setLoading(true);
+        setError(null);
         console.log('Loading started...');
-        setLoading(true); // Устанавливаем состояние loading в true
-        const response = await fetch(`your-api-endpoint?query=${searchQuery}`);
+
+        const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=YOUR_API_KEY&query=${searchQuery}`);
         const data = await response.json();
+
+        if (data.results) {
+          setMovies(data.results);
+        } else {
+          setMovies([]);
+        }
+
         console.log('Movies data loaded:', data);
-        setMovies(data.results); // Обновляем состояние с фильмами
       } catch (error) {
         console.error('Error fetching movies:', error);
         setError('Failed to load movies');
       } finally {
-        setLoading(false); // Устанавливаем loading в false после завершения загрузки
+        setLoading(false);
         console.log('Loading finished...');
       }
     };
 
     fetchMovies();
-  }, [searchQuery]); // Эффект будет запускаться, когда меняется searchQuery
+  }, [searchQuery]);
 
   const handleInputChange = (event) => {
     setSearchQuery(event.target.value);
@@ -40,22 +60,24 @@ const MoviesPage = ({ onSearch, setSearchQuery, searchQuery, movies, loading, on
   return (
     <div>
       <h1>Movies</h1>
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={handleInputChange}
-        placeholder="Search for a movie"
-      />
-      <button onClick={handleSearch}>Search</button>
+      
+      <div>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={handleInputChange}
+          placeholder="Search for a movie"
+        />
+        <button onClick={handleSearch}>Search</button>
+      </div>
+
       {error && <p>{error}</p>}
       {loading && <p>Loading...</p>}
       {movies.length === 0 && !loading && searchQuery && !error && <p>No movies found.</p>}
+
       <ul>
         {movies.map((movie) => (
-          <li key={movie.id} onClick={() => onMovieClick(movie.id)}>
-            <h3>{movie.title}</h3>
-            <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt={movie.title} />
-          </li>
+          <MovieCard key={movie.id} movie={movie} />  
         ))}
       </ul>
     </div>
@@ -63,6 +85,7 @@ const MoviesPage = ({ onSearch, setSearchQuery, searchQuery, movies, loading, on
 };
 
 export default MoviesPage;
+
 
 
 

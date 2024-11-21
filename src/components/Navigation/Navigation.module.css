@@ -23,6 +23,6 @@
 }
 
 .activeLink {
-  background-color: #007bff; /* Синий цвет для активной ссылки */
+  background-color: #007bff; 
   color: white;
 }

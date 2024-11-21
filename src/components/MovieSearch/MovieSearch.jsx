@@ -1,36 +1,32 @@
 // src/pages/MovieSearch/MovieSearch.jsx
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { fetchMovies } from '../../components/ApiService/ApiService'; // Замените на ваш реальный метод для получения фильмов
-import css from './MovieSearch.module.css'; // Подключите стили, если есть
+import { fetchMovies } from '../../components/ApiService/ApiService'; 
+import css from './MovieSearch.module.css'; 
 
 const MovieSearch = () => {
-  const location = useLocation(); // Получаем текущее расположение URL
-  const navigate = useNavigate(); // Для перенаправления
+  const location = useLocation(); 
+  const navigate = useNavigate();
   const [movies, setMovies] = useState(() => {
-    // Сохраняем состояние фильмов из sessionStorage (если оно есть)
     const savedMovies = sessionStorage.getItem('movies');
     return savedMovies ? JSON.parse(savedMovies) : [];
   });
-  const [loading, setLoading] = useState(false); // Индикатор загрузки
-  const [error, setError] = useState(null); // Ошибка
+  const [loading, setLoading] = useState(false); 
+  const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(() => {
-    // Сохраняем поисковый запрос из URL или sessionStorage
     const savedQuery = sessionStorage.getItem('searchQuery');
     return savedQuery || '';
   });
 
-  // Извлекаем query из строки запроса URL
   const query = new URLSearchParams(location.search).get('query') || '';
 
   useEffect(() => {
     if (query) {
-      setSearchQuery(query); // Устанавливаем query из URL
+      setSearchQuery(query);
     }
   }, [query]);
 
   useEffect(() => {
-    // Если query пустой, сбрасываем состояние
     if (!query) {
       setMovies([]);
       setError(null);
@@ -43,10 +39,9 @@ const MovieSearch = () => {
       setError(null);
 
       try {
-        const response = await fetchMovies(query); // Выполняем запрос
+        const response = await fetchMovies(query); 
         if (response && response.length > 0) {
-          setMovies(response); // Устанавливаем фильмы в состояние
-          // Сохраняем данные в sessionStorage
+          setMovies(response); 
           sessionStorage.setItem('movies', JSON.stringify(response));
           sessionStorage.setItem('searchQuery', query);
         } else {
@@ -61,10 +56,9 @@ const MovieSearch = () => {
       }
     };
 
-    fetchData(); // Вызываем функцию загрузки фильмов
+    fetchData(); 
   }, [query]);
 
-  // Обработка формы поиска
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim() === '') {
@@ -72,7 +66,6 @@ const MovieSearch = () => {
       return;
     }
 
-    // Обновляем URL с новым запросом
     navigate(`/movies?query=${searchQuery}`);
   };
 
@@ -101,7 +94,7 @@ const MovieSearch = () => {
               <Link
                 to={{
                   pathname: `/movies/${movie.id}`,
-                  state: { from: location }, // Передаем текущее положение
+                  state: { from: location }, 
                 }}
                 className={css.movieLink}
               >
