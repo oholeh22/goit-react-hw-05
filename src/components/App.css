@@ -51,3 +51,28 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.header-nav {
+  display: flex; /* Элементы выровнены по горизонтали */
+  justify-content: center; /* Центрируем элементы */
+  align-items: center; /* Выровнять по вертикали */
+  gap: 20px; /* Расстояние между ссылками */
+  background-color: #2c3e50; /* Фон навигации */
+  padding: 10px 20px; /* Внутренние отступы */
+}
+
+.header-nav a {
+  color: #ecf0f1; /* Светлый цвет ссылок */
+  text-decoration: none; /* Убираем подчеркивание */
+  font-size: 16px; /* Размер шрифта */
+  font-weight: 500; /* Средняя жирность */
+  transition: color 0.3s ease; /* Плавное изменение цвета */
+}
+
+.header-nav a:hover {
+  color: #1abc9c; /* Цвет при наведении */
+}
+
+.header-nav a.active {
+  border-bottom: 2px solid #1abc9c; /* Подчеркивание активной ссылки */
+}

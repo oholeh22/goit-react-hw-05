@@ -1,14 +1,18 @@
 import { Suspense, lazy, useState, useEffect } from 'react';
-import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, useLocation, NavLink } from 'react-router-dom';
 import { fetchPopularMovies, searchMovies } from './ApiService/ApiService';
 import './App.css';
 import MovieSearch from './MovieSearch/MovieSearch';
 
 function Navigation() {
   return (
-    <nav>
-      <Link to="/">Home</Link>
-      <Link to="/movies">Movies</Link>
+    <nav className="header-nav">
+      <NavLink to="/" className={({ isActive }) => (isActive ? 'active' : '')}>
+        Home
+      </NavLink>
+      <NavLink to="/movies" className={({ isActive }) => (isActive ? 'active' : '')}>
+        Movies
+      </NavLink>
     </nav>
   );
 }
