@@ -35,7 +35,7 @@ function HomePage() {
           <li key={movie.id}>
             <Link
               to={`/movies/${movie.id}`}
-              state={{ from: location }} // Передаємо поточне місце розташування
+              state={{ from: location }} 
             >
               {movie.title}
             </Link>

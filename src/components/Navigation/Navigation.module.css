@@ -1,21 +1,18 @@
-/* navigation.module.css */
-
 .headerNav {
-  /* Ваші стилі для навігації */
   display: flex;
   gap: 20px;
 }
 
 .active {
-  color: #ff6347; /* Приклад кольору для активного посилання */
+  color: #ff6347;
   font-weight: bold;
 }
 
 a {
   text-decoration: none;
-  color: black; /* Ваш стиль для всіх посилань */
+  color: black;
 }
 
 a:hover {
-  color: #008cba; /* Стиль для ховера */
+  color: #008cba;
 }
