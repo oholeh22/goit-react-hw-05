@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { fetchPopularMovies } from '../../components/ApiService/ApiService';
+import MovieList from '../../components/MovieList/MovieList'; 
 
 function HomePage() {
   const [popularMovies, setPopularMovies] = useState([]);
@@ -17,8 +18,9 @@ function HomePage() {
       } catch (err) {
         setError('Failed to load popular movies.');
         console.error(err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getMovies();
@@ -30,18 +32,8 @@ function HomePage() {
   return (
     <div>
       <h1>Popular Movies</h1>
-      <ul>
-        {popularMovies.map(movie => (
-          <li key={movie.id}>
-            <Link
-              to={`/movies/${movie.id}`}
-              state={{ from: location }} 
-            >
-              {movie.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
+
+      <MovieList movies={popularMovies} />
     </div>
   );
 }

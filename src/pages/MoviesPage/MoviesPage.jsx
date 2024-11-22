@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchMovies } from '../../components/ApiService/ApiService';
+import MovieList from '../../components/MovieList/MovieList'; 
 
 function MoviesPage() {
   const [movies, setMovies] = useState([]);
@@ -40,7 +41,7 @@ function MoviesPage() {
     }
     setError('');
     setSearchParams({ query });
-    navigate(`/movies?query=${query}`); 
+    navigate(`/movies?query=${query}`);
   };
 
   return (
@@ -57,13 +58,8 @@ function MoviesPage() {
 
       {loading && <div>Loading...</div>}
       {error && <div className="error">{error}</div>}
-      <ul>
-        {movies.map(({ id, title }) => (
-          <li key={id}>
-            <a href={`/movies/${id}`}>{title}</a>
-          </li>
-        ))}
-      </ul>
+
+      <MovieList movies={movies} />
     </div>
   );
 }
