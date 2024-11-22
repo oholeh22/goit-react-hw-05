@@ -1,72 +1,63 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation, Link, Outlet } from 'react-router-dom';
+import { useParams, useLocation, Link, Outlet } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import { fetchMovieDetails } from '../../components/ApiService/ApiService';
-import css from './MovieDetailsPage.module.css'; 
 
-const MovieDetailsPage = () => {
+function MovieDetailsPage() {
   const { movieId } = useParams();
-  const navigate = useNavigate();
   const location = useLocation();
-  const [movieDetails, setMovieDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const searchQuery = new URLSearchParams(location.search).get('query') || '';
+  const backLinkRef = useRef(location.state?.from ?? '/');
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchDetails = async () => {
+    const getMovieDetails = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
         const movieData = await fetchMovieDetails(movieId);
-        setMovieDetails(movieData);
+        setMovie(movieData);
       } catch (err) {
-        setError('Error fetching movie details');
+        setError('Failed to load movie details.');
         console.error(err);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
-    fetchDetails();
+    getMovieDetails();
   }, [movieId]);
 
-  const handleGoBack = () => {
-    const backPath = location.state?.from || '/';
-    navigate(backPath);
-  };
-
-  if (loading) return <p>Loading movie details...</p>;
-  if (error) return <p>{error}</p>;
-  if (!movieDetails) return <p>Movie details not found.</p>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!movie) return <div>Movie not found.</div>;
 
   return (
-    <div className={css.movieDetails}>
-      <button onClick={handleGoBack} className={css.goBackButton}>Go Back</button>
-      <h2>{movieDetails.title}</h2>
-      <img
-        className={css.moviePoster}
-        src={
-          movieDetails.poster_path
-            ? `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
-            : 'https://via.placeholder.com/500x750'
-        }
-        alt={movieDetails.title}
-      />
-      <p>{movieDetails.overview}</p>
-      <p>Release date: {movieDetails.release_date}</p>
-      <p>Rating: {movieDetails.vote_average}</p>
+    <div>
+      <button onClick={() => window.history.back()}>Go Back</button>
+      <h1>{movie.title}</h1>
+      <p>{movie.overview}</p>
 
-      <nav className={css.movieNav}>
-        <Link to="cast" className={css.navLink} state={{ from: location.state?.from }}>Cast</Link>
-        <Link to="reviews" className={css.navLink} state={{ from: location.state?.from }}>Reviews</Link>
-      </nav>
+      <h3>Additional Information</h3>
+      <ul>
+        <li>
+          <Link to="cast" state={{ from: backLinkRef.current }}>
+            Cast
+          </Link>
+        </li>
+        <li>
+          <Link to="reviews" state={{ from: backLinkRef.current }}>
+            Reviews
+          </Link>
+        </li>
+      </ul>
 
-      <Outlet /> 
+      <Outlet />
     </div>
   );
-};
+}
 
 export default MovieDetailsPage;
+
+
 
 
 

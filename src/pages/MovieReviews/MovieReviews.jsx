@@ -1,48 +1,45 @@
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchMovieReviews } from '../../components/ApiService/ApiService'; 
+import { useState, useEffect } from 'react';
+import { fetchMovieReviews } from '../../components/ApiService/ApiService';
 
-const MovieReviews = () => {
-  const { movieId } = useParams(); 
+function MovieReviews() {
+  const { movieId } = useParams();
   const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const getReviews = async () => {
+      setLoading(true);
       try {
-        const response = await fetchMovieReviews(movieId); 
-        setReviews(response.results || []); 
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-      } finally {
-        setLoading(false); 
+        const reviewData = await fetchMovieReviews(movieId);
+        setReviews(reviewData);
+      } catch (err) {
+        setError('Failed to load reviews.');
+        console.error(err);
       }
+      setLoading(false);
     };
 
     getReviews();
   }, [movieId]);
 
-  if (loading) {
-    return <p>Loading reviews...</p>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!reviews.length) return <div>No reviews available.</div>;
 
   return (
-    <div>
-      <h2>Reviews</h2>
-      {reviews.length === 0 ? (
-        <p>No Reviews</p> 
-      ) : (
-        <ul>
-          {reviews.map((review) => (
-            <li key={review.id}>
-              <h3>{review.author}</h3>
-              <p>{review.content}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <ul>
+      {reviews.map(({ id, author, content }) => (
+        <li key={id}>
+          <p><strong>{author}</strong></p>
+          <p>{content}</p>
+        </li>
+      ))}
+    </ul>
   );
-};
+}
 
 export default MovieReviews;
+
+

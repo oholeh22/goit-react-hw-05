@@ -1,20 +1,22 @@
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { fetchMovieCast } from '../../components/ApiService/ApiService';
 
 function MovieCast() {
-  const { movieId } = useParams(); 
+  const { movieId } = useParams();
   const [cast, setCast] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const getCast = async () => {
       setLoading(true);
       try {
-        const castData = await fetchMovieCast(movieId); 
+        const castData = await fetchMovieCast(movieId);
         setCast(castData);
-      } catch (error) {
-        console.error('Error fetching cast:', error);
+      } catch (err) {
+        setError('Failed to load cast information.');
+        console.error(err);
       }
       setLoading(false);
     };
@@ -22,30 +24,19 @@ function MovieCast() {
     getCast();
   }, [movieId]);
 
-  if (loading) {
-    return <div>Loading cast...</div>;
-  }
-
-  if (!cast.length) {
-    return <p>No cast information available for this movie.</p>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!cast.length) return <div>No cast information available.</div>;
 
   return (
-    <div>
-      <h2>Cast</h2>
-      <ul>
-        {cast.map((actor) => (
-          <li key={actor.id}>
-            <img
-              src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
-              alt={actor.name}
-              width="50"
-            />
-            <p>{actor.name} as {actor.character}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {cast.map(({ id, name, character }) => (
+        <li key={id}>
+          <p>{name}</p>
+          <p>Character: {character}</p>
+        </li>
+      ))}
+    </ul>
   );
 }
 

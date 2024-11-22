@@ -1,34 +1,28 @@
-import { useNavigate } from 'react-router-dom';
-import { getFullImageUrl } from '../../components/ApiService/ApiService';
-import css from './MovieList.module.css';
+import { Link, useLocation } from 'react-router-dom';
 
-function MovieList({ movies, onMovieClick }) {
-  const navigate = useNavigate();
+function MovieList({ movies }) {
+  const location = useLocation();
 
-  const handleMovieClick = (movieId) => {
-    if (onMovieClick) {
-      onMovieClick(movieId);
-    } else {
-      navigate(`/movies/${movieId}`);
-    }
-  };
+  if (!movies.length) {
+    return <p>No movies found. Please try searching for something else.</p>;
+  }
 
   return (
-    <div className={css.movieList}>
-      {movies.map((movie) => (
-        <div key={movie.id} className={css.movieCard}>
-          <img
-            src={getFullImageUrl(movie.poster_path)}
-            alt={movie.title}
-            onClick={() => handleMovieClick(movie.id)}
-            style={{ cursor: 'pointer' }}
-          />
-          <h2>{movie.title}</h2>
-        </div>
+    <ul>
+      {movies.map(({ id, title }) => (
+        <li key={id}>
+          <Link
+            to={`/movies/${id}`}
+            state={{ from: location }} 
+          >
+            {title}
+          </Link>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }
 
 export default MovieList;
+
 

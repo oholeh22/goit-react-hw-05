@@ -1,54 +1,49 @@
 import { useState, useEffect } from 'react';
-import { fetchTrendingMovies } from '../../components/ApiService/ApiService';
-import MovieList from '../../components/MovieList/MovieList';
-import css from './HomePage.module.css'
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { fetchPopularMovies } from '../../components/ApiService/ApiService';
 
 function HomePage() {
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [popularMovies, setPopularMovies] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const location = useLocation();
 
   useEffect(() => {
-    const fetchMovies = async () => {
+    const getMovies = async () => {
+      setLoading(true);
       try {
-        const data = await fetchTrendingMovies();
-        setMovies(data);
-      } catch (error) {
-        console.error('Error fetching trending movies:', error);
-      } finally {
-        setLoading(false);
+        const movies = await fetchPopularMovies();
+        setPopularMovies(movies);
+      } catch (err) {
+        setError('Failed to load popular movies.');
+        console.error(err);
       }
+      setLoading(false);
     };
 
-    fetchMovies();
+    getMovies();
   }, []);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <div className={css.trending_container}>
-    <h1>Trending Movies</h1>
-    <ul className={css.movie_list}>
-  {movies.map((movie) => (
-    <li key={movie.id} className={css.movie_card}>
-      <Link to={`/movies/${movie.id}`} className={css.movie_link}>
-        <img
-          src={
-            movie.poster_path
-              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-              : 'https://via.placeholder.com/200'
-          }
-          alt={movie.title}
-        />
-        <h3>{movie.title}</h3>
-      </Link>
-    </li>
-  ))}
-</ul>
-  </div>
-  )
+    <div>
+      <h1>Popular Movies</h1>
+      <ul>
+        {popularMovies.map(movie => (
+          <li key={movie.id}>
+            <Link
+              to={`/movies/${movie.id}`}
+              state={{ from: location }} // Передаємо поточне місце розташування
+            >
+              {movie.title}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default HomePage;

@@ -1,28 +1,21 @@
-.nav {
-  background-color: #333;
-  padding: 10px 20px;
-}
+/* navigation.module.css */
 
-.nav ul {
-  list-style: none;
+.headerNav {
+  /* Ваші стилі для навігації */
   display: flex;
   gap: 20px;
 }
 
-.navLink {
-  color: white;
+.active {
+  color: #ff6347; /* Приклад кольору для активного посилання */
+  font-weight: bold;
+}
+
+a {
   text-decoration: none;
-  font-size: 18px;
-  padding: 10px 15px;
-  transition: background-color 0.3s;
-  border-radius: 5px;
+  color: black; /* Ваш стиль для всіх посилань */
 }
 
-.navLink:hover {
-  background-color: #555;
-}
-
-.activeLink {
-  background-color: #007bff; 
-  color: white;
+a:hover {
+  color: #008cba; /* Стиль для ховера */
 }

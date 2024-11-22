@@ -1,88 +1,72 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import MovieCard from '../../components/MovieCard/MovieCard';  
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { searchMovies } from '../../components/ApiService/ApiService';
 
-const MoviesPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+function MoviesPage() {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const location = useLocation();
+  const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const query = new URLSearchParams(location.search).get('query') || '';
-    setSearchQuery(query);
-  }, [location.search]);
+    const query = searchParams.get('query');
+    if (query) {
+      fetchMovies(query);
+    }
+  }, [searchParams]);
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      if (!searchQuery.trim()) return;
-
-      try {
-        setLoading(true);
-        setError(null);
-        console.log('Loading started...');
-
-        const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=YOUR_API_KEY&query=${searchQuery}`);
-        const data = await response.json();
-
-        if (data.results) {
-          setMovies(data.results);
-        } else {
-          setMovies([]);
-        }
-
-        console.log('Movies data loaded:', data);
-      } catch (error) {
-        console.error('Error fetching movies:', error);
-        setError('Failed to load movies');
-      } finally {
-        setLoading(false);
-        console.log('Loading finished...');
-      }
-    };
-
-    fetchMovies();
-  }, [searchQuery]);
-
-  const handleInputChange = (event) => {
-    setSearchQuery(event.target.value);
+  const fetchMovies = async (query) => {
+    setLoading(true);
+    setError('');
+    try {
+      const results = await searchMovies(query);
+      setMovies(results);
+    } catch (err) {
+      setError('Error fetching movies. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      navigate(`/movies?query=${searchQuery}`);
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) {
+      setError('Please enter a valid search query.');
+      return;
     }
+    setError('');
+    setSearchParams({ query });
+    navigate(`/movies?query=${query}`); 
   };
 
   return (
     <div>
-      <h1>Movies</h1>
-      
-      <div>
+      <form onSubmit={handleSearch}>
         <input
           type="text"
           value={searchQuery}
-          onChange={handleInputChange}
-          placeholder="Search for a movie"
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search for a movie..."
         />
-        <button onClick={handleSearch}>Search</button>
-      </div>
+        <button type="submit">Search</button>
+      </form>
 
-      {error && <p>{error}</p>}
-      {loading && <p>Loading...</p>}
-      {movies.length === 0 && !loading && searchQuery && !error && <p>No movies found.</p>}
-
+      {loading && <div>Loading...</div>}
+      {error && <div className="error">{error}</div>}
       <ul>
-        {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />  
+        {movies.map(({ id, title }) => (
+          <li key={id}>
+            <a href={`/movies/${id}`}>{title}</a>
+          </li>
         ))}
       </ul>
     </div>
   );
-};
+}
 
 export default MoviesPage;
 
