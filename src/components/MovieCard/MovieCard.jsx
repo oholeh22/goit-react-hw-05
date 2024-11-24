@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import style from './MovieCard.module.css'
 
+const getFullImageUrl = (path) => {
+  return path ? `https://image.tmdb.org/t/p/w500${path}` : 'https://via.placeholder.com/500x750?text=No+Image';
+};
+
 const MovieCard = ({ movie, location }) => {
   return (
     <Link
@@ -9,7 +13,7 @@ const MovieCard = ({ movie, location }) => {
       className={style.movieCard}  
     >
       <img
-        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        src={getFullImageUrl(movie.poster_path)}
         alt={movie.title}
         className={style.moviePoster}
       />
