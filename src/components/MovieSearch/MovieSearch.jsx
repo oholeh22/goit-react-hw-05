@@ -1,8 +1,7 @@
-// src/pages/MovieSearch/MovieSearch.jsx
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { fetchMovies } from '../../components/ApiService/ApiService'; 
-import css from './MovieSearch.module.css'; 
+import style from './MovieSearch.module.css'; 
 
 const MovieSearch = () => {
   const location = useLocation(); 
@@ -70,40 +69,40 @@ const MovieSearch = () => {
   };
 
   return (
-    <div className={css.movieSearch}>
-      <form onSubmit={handleSearch} className={css.searchForm}>
+    <div className={style.movieSearch}>
+      <form onSubmit={handleSearch} className={style.searchForm}>
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search for movies..."
-          className={css.searchInput}
+          className={style.searchInput}
         />
-        <button type="submit" className={css.searchButton}>
+        <button type="submit" className={style.searchButton}>
           Search
         </button>
       </form>
 
       {loading && <p>Loading...</p>}
-      {error && <p className={css.error}>{error}</p>}
+      {error && <p className={style.error}>{error}</p>}
 
       {!loading && !error && movies.length > 0 && (
-        <ul className={css.movieList}>
+        <ul className={style.movieList}>
           {movies.map((movie) => (
-            <li key={movie.id} className={css.movieItem}>
+            <li key={movie.id} className={style.movieItem}>
               <Link
                 to={{
                   pathname: `/movies/${movie.id}`,
                   state: { from: location }, 
                 }}
-                className={css.movieLink}
+                className={style.movieLink}
               >
                 <img
                   src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/150'}
                   alt={movie.title}
-                  className={css.moviePoster}
+                  className={style.moviePoster}
                 />
-                <h3 className={css.movieTitle}>{movie.title}</h3>
+                <h3 className={style.movieTitle}>{movie.title}</h3>
               </Link>
             </li>
           ))}

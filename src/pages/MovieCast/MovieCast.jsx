@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { fetchMovieCast } from '../../components/ApiService/ApiService';
+import style from './MovieCast.module.css'
 
 function MovieCast() {
   const { movieId } = useParams();
@@ -29,9 +30,9 @@ function MovieCast() {
   if (!cast.length) return <div>No cast information available.</div>;
 
   return (
-    <ul>
+    <ul className={style.castList}>
       {cast.map(({ id, name, character }) => (
-        <li key={id}>
+        <li key={id} className={style.castItem}>
           <p>{name}</p>
           <p>Character: {character}</p>
         </li>

@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
+import style from './MovieList.module.css'
 
 function MovieList({ movies }) {
   const location = useLocation();
@@ -8,7 +9,7 @@ function MovieList({ movies }) {
   }
 
   return (
-    <ul>
+    <ul className={style.movieList}>
       {movies.map(({ id, title }) => (
         <li key={id}>
           <Link

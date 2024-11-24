@@ -1,6 +1,7 @@
 import { useParams, useLocation, Link, Outlet } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { fetchMovieDetails } from '../../components/ApiService/ApiService';
+import style from './MovieDetailsPage.module.css'
 
 function MovieDetailsPage() {
   const { movieId } = useParams();
@@ -31,8 +32,8 @@ function MovieDetailsPage() {
   if (!movie) return <div>Movie not found.</div>;
 
   return (
-    <div>
-      <button onClick={() => window.history.back()}>Go Back</button>
+    <div className={style.movieDetails}>
+      <button onClick={() => window.history.back()} className={style.goBackButton}>Go Back</button>
       <h1>{movie.title}</h1>
       <p>{movie.overview}</p>
 

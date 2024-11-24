@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { searchMovies } from '../../components/ApiService/ApiService';
 import MovieList from '../../components/MovieList/MovieList'; 
+import style from './MoviesPage.module.css'
 
 function MoviesPage() {
   const [movies, setMovies] = useState([]);
@@ -46,18 +47,19 @@ function MoviesPage() {
 
   return (
     <div>
-      <form onSubmit={handleSearch}>
+      <form onSubmit={handleSearch} className={style.formWrapper}>
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search for a movie..."
+          className={style.searchInput}
         />
-        <button type="submit">Search</button>
+        <button type="submit" className={style.searchButton}>Search</button>
       </form>
 
-      {loading && <div>Loading...</div>}
-      {error && <div className="error">{error}</div>}
+      {loading && <div className={style.loading}>Loading...</div>}
+      {error && <div className={style.error}>{error}</div>}
 
       <MovieList movies={movies} />
     </div>
